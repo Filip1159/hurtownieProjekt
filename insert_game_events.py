@@ -15,7 +15,12 @@ df = pd.read_csv(FILEPATH)
 
 print('File loaded')
 
+total_rows = len(df)
+
 for row in df.itertuples():
+    if row.Index % 10000 == 0:
+        print(f'{row.Index}/{total_rows}')
+
     cursor.execute('''
         INSERT INTO DIM_GameEvent (game_id, minute, type) values
         (?, ?, ?)

@@ -26,9 +26,6 @@ for valuation in valuationd_df.itertuples():
 for days_to_valuations in player_to_days_and_valuations.values():
     sorted(days_to_valuations, key=lambda tpl: tpl[0])
 
-print(player_to_days_and_valuations.keys())
-
-
 def get_player_valuation_for_day(player_id, date):
     if player_id not in player_to_days_and_valuations:
         return None
@@ -39,26 +36,31 @@ def get_player_valuation_for_day(player_id, date):
         if player_valuations[i][0] > date:
             return player_valuations[i-1][1]
 
+total_rows = len(df)
 
 for row in df.itertuples():
-    cursor.execute('''
-        INSERT INTO FACT_APPEARANCES (player_id, game_id, player_club_id, player_current_club_id, date, competition_id,
-        yellow_cards, red_cards, goals, assists, minutes_played, market_value_in_eur) values
-        (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        ''',
-                   row.player_id,
-                   row.game_id,
-                   row.player_club_id,
-                   row.player_current_club_id,
-                   row.date.replace('-', '') if type(row.date) is str else None,
-                   row.competition_id,
-                   row.yellow_cards,
-                   row.red_cards,
-                   row.goals,
-                   row.assists,
-                   row.minutes_played,
-                   get_player_valuation_for_day(row.player_id, row.date) if type(row.date) is str else None
-                   )
+    if row.Index % 10000 == 0:
+        print(f'{row.Index}/{total_rows}')
+
+    if row.Index < 100000:
+        cursor.execute('''
+            INSERT INTO FACT_APPEARANCES (player_id, game_id, player_club_id, player_current_club_id, date, competition_id,
+            yellow_cards, red_cards, goals, assists, minutes_played, market_value_in_eur) values
+            (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ''',
+                    row.player_id,
+                    row.game_id,
+                    row.player_club_id,
+                    row.player_current_club_id,
+                    row.date.replace('-', '') if type(row.date) is str else None,
+                    row.competition_id,
+                    row.yellow_cards,
+                    row.red_cards,
+                    row.goals,
+                    row.assists,
+                    row.minutes_played,
+                    get_player_valuation_for_day(row.player_id, row.date) if type(row.date) is str else None
+                    )
 
 conn.commit()
 

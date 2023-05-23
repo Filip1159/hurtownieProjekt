@@ -26,7 +26,7 @@ for row in df.itertuples():
                    row.competition_type,
                    row.season,
                    row.round,
-                   row.date if type(row.date) is str else None,
+                   row.date.replace('-', '') if type(row.date) is str else None,
                    row.home_club_goals,
                    row.away_club_goals,
                    row.home_club_position,

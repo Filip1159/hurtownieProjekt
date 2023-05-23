@@ -25,7 +25,7 @@ for row in df.itertuples():
                    row.name,
                    row.current_club_name,
                    row.country_of_birth if type(row.country_of_birth) is str else None,
-                   row.date_of_birth if type(row.date_of_birth) is str else None,
+                   row.date_of_birth.replace('-', '') if type(row.date_of_birth) is str else None,
                    row.position,
                    row.sub_position if type(row.sub_position) is str else None,
                    row.foot if type(row.foot) is str else None,
